@@ -3,10 +3,25 @@
 
 #include<iostream>
 #include<initializer_list>
+#include<stdexcept>
 
 using namespace std;
 
 class Vector {
+	public:
+    	class ConstIterator;
+    	class Iterator;
+
+    	using value_type = double;
+    	using size_type = std::size_t;
+    	using difference_type = std::ptrdiff_t;
+		using reference = value_type&;
+    	using const_reference = const value_type&;
+    	using pointer = value_type*;
+    	using const_pointer = const value_type*;
+    	using iterator = Vector::Iterator;
+    	using const_iterator = Vector::ConstIterator;
+
 	private:
 		size_t sz;
 		size_t max_sz;
@@ -30,7 +45,53 @@ class Vector {
 		const double& operator[](size_t index) const;
 		size_t capacity() const;
 		friend ostream& operator<<(ostream& os, const Vector& v);
-}
+		
+		iterator begin();
+		iterator end();
+		const_iterator begin() const;
+		const_iterator end() const;
+
+		class Iterator {
+    		public:
+        		using value_type = Vector::value_type;
+        		using reference = Vector::reference;
+        		using pointer = Vector::pointer;
+        		using difference_type = Vector::difference_type;
+        		using iterator_category = std::forward_iterator_tag;
+
+    		private:
+        		pointer ptr;
+
+    		public:
+        		Iterator();
+				Iterator(pointer ptr);
+
+				reference operator*() const;
+				pointer operator->() const;
+				bool operator==(const const_iterator&) const;
+				bool operator!=(const const_iterator&) const;
+				iterator& operator++();
+				iterator operator++(int);
+				operator const_iterator() const;
+    	};
+
+    	class ConstIterator {
+    		public:
+        		using value_type = Vector::value_type;
+        		using reference = Vector::const_reference;
+        		using pointer = Vector::const_pointer;
+        		using difference_type = Vector::difference_type;
+        		using iterator_category = std::forward_iterator_tag;
+
+    		private:
+        		//Instance variables
+
+    		public:
+        		//Member Functions
+    	};
+};
+
+
 
 Vector::Vector() : sz(0), max_sz(0), values(nullptr) {}
 
@@ -159,5 +220,27 @@ ostream& operator<<(ostream& os, const Vector& v) {
 	os << "]";
 	return os;
 }
+
+Vector::iterator Vector::begin() {
+	return values;
+}
+
+Vector::iterator end() {
+	return values + sz;
+}
+
+Vector::const_iterator begin() const {
+	return values;
+}
+
+Vector::const_iterator end() const {
+	return values + sz;
+}
+
+Iterator::Iterator() : pointer(nullptr) {}
+
+Iterator::Iterator(pointer ptr) : pointer(ptr) {}
+
+
 
 #endif
